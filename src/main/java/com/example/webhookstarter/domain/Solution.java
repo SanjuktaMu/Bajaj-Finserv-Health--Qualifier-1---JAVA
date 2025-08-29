@@ -1,6 +1,9 @@
 package com.example.webhookstarter.domain;
 
-// imports
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -8,6 +11,7 @@ package com.example.webhookstarter.domain;
 @AllArgsConstructor
 @Builder
 public class Solution {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

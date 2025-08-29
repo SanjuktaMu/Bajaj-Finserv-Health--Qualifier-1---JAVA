@@ -7,11 +7,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+
 app:
   generate-webhook-url: "https://bfhldevapigw.healthrx.co.in/hiring/generateWebhook/JAVA"
   test-webhook-url: "https://bfhldevapigw.healthrx.co.in/hiring/testWebhook/JAVA"
-  # The regNo we will register with the generateWebhook call
-  regNo: "REG12347"
+  regNo: "22BCE8554"
   name: "John Doe"
   email: "john@example.com"
