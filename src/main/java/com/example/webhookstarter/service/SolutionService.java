@@ -29,8 +29,42 @@ public class SolutionService {
 
     // --- public methods after constructor ---
     public void executeFlowOnStartup() {
-        // full method body
+    try {
+        // 1) Call generateWebhook
+        GenerateWebhookRequest req = new GenerateWebhookRequest(name, regNo, email);
+        log.info("Sending generateWebhook request for regNo={}", regNo);
+        GenerateWebhookResponse resp = webhookClient.generateWebhook(generateWebhookUrl, req);
+        if (resp == null) {
+            throw new IllegalStateException("Null response from generateWebhook");
+        }
+        log.info("Received webhook={}, accessTokenPresent={}", resp.getWebhook(), resp.getAccessToken() != null);
+
+        // 2) Force Question 2 (ignore regNo logic)
+        int questionId = 2; 
+        log.info("Forced questionId = {}", questionId);
+
+        // 3) Load final SQL (from resources)
+        String finalQuery = queryProvider.loadQueryForQuestion(questionId);
+
+        // 4) Persist solution locally
+        Solution sol = Solution.builder()
+                .regNo(regNo)
+                .questionId(questionId)
+                .finalQuery(finalQuery)
+                .submittedAt(OffsetDateTime.now())
+                .build();
+        repository.save(sol);
+        log.info("Saved solution with id {}", sol.getId());
+
+        // 5) Submit the final query to the webhook with JWT
+        webhookClient.submitFinalQuery(resp.getWebhook(), resp.getAccessToken(), finalQuery);
+        log.info("Submitted final query to remote webhook successfully.");
+
+    } catch (Exception e) {
+        log.error("Error during startup flow:", e);
     }
+}
+
 
     private int determineQuestionIdFromRegNo(String regNoStr) {
         // helper method
