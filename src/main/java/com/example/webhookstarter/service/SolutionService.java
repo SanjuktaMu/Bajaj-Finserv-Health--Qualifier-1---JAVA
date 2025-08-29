@@ -35,28 +35,7 @@ public class SolutionService {
     private String testWebhookUrl;
 
     public void executeFlowOnStartup() {
-        // Step 1: Generate webhook
-        var generateReq = new GenerateWebhookRequest(name, regNo, email);
-        var response = webhookClient.generateWebhook(generateWebhookUrl, generateReq);
-
-        // Step 2: Determine question
-        int questionId = determineQuestionIdFromRegNo(regNo);
-
-        // Step 3: Load SQL query
-        String finalQuery = queryProvider.loadQueryForQuestion(questionId);
-
-        // Step 4: Save solution in H2
-        repository.save(Solution.builder()
-                .regNo(regNo)
-                .questionId(questionId)
-                .finalQuery(finalQuery)
-                .submittedAt(OffsetDateTime.now())
-                .build());
-
-        // Step 5: Submit final query
-        webhookClient.submitFinalQuery(response.getWebhook(), response.getAccessToken(), finalQuery);
-
-        System.out.println("✅ Workflow executed successfully!");
+        // full method body
     }
 
     private int determineQuestionIdFromRegNo(String regNoStr) {
